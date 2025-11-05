@@ -15,12 +15,12 @@ namespace Mallard
         private QueryResult? _lastQueryResult;
         private string _lastSql = string.Empty;
 
-        public SqlAssistant(IQueryExecutor executor, ClaudeApiClient claudeClient, ConversationContext context)
+        public SqlAssistant(IQueryExecutor executor, ClaudeApiClient claudeClient, ConversationContext context, string databasePath)
         {
             _executor = executor;
             _claudeClient = claudeClient;
             _context = context;
-            _excelExporter = new ExcelExporter();
+            _excelExporter = new ExcelExporter(databasePath, addPowerQuery: true);
         }
 
         public async Task RunAsync()
@@ -289,13 +289,20 @@ namespace Mallard
 
             try
             {
-                Console.WriteLine($"\nExporting to Excel...");
+                Console.WriteLine($"\nExporting to Excel with Power Query support...");
 
                 var fullPath = _excelExporter.ExportToExcel(_lastQueryResult, filename, _lastSql);
+                var sqlFile = System.IO.Path.ChangeExtension(fullPath, ".sql");
+                var mFile = System.IO.Path.ChangeExtension(fullPath, ".m");
 
-                Console.WriteLine($"✓ Created: {fullPath}");
-                Console.WriteLine($"  - Results sheet: {_lastQueryResult.RowCount} rows, {_lastQueryResult.ColumnNames.Count} columns");
-                Console.WriteLine($"  - Query Info sheet: metadata and SQL");
+                Console.WriteLine($"✓ Created 3 files:");
+                Console.WriteLine($"  📊 {System.IO.Path.GetFileName(fullPath)}");
+                Console.WriteLine($"     - Results sheet: {_lastQueryResult.RowCount} rows, {_lastQueryResult.ColumnNames.Count} columns");
+                Console.WriteLine($"     - Query Info sheet: metadata and SQL");
+                Console.WriteLine($"     - Power Query Setup sheet: instructions for refreshable connection");
+                Console.WriteLine($"  📝 {System.IO.Path.GetFileName(sqlFile)} - SQL query for editing/sharing");
+                Console.WriteLine($"  🔄 {System.IO.Path.GetFileName(mFile)} - Power Query M code (import to Excel)");
+                Console.WriteLine($"\n💡 Tip: Import the .m file in Excel for a refreshable connection to DuckDB!");
             }
             catch (Exception ex)
             {

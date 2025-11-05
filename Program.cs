@@ -103,7 +103,7 @@ namespace Mallard
                 var claudeClient = new ClaudeApiClient(apiKey);
 
                 // Start the assistant
-                var assistant = new SqlAssistant(executor, claudeClient, context);
+                var assistant = new SqlAssistant(executor, claudeClient, context, dbPath);
                 await assistant.RunAsync();
             }
             catch (Exception ex)

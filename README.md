@@ -113,8 +113,79 @@ FROM customers c
 JOIN monthly_sales ms ON c.customer_id = ms.customer_id
 ORDER BY ms.total_sales DESC;
 
-Execute this query? (y/n/e for explain):
+Execute this query? (y/n/e for explain): y
+
+> export sales_report.xlsx
+
+Exporting to Excel with Power Query support...
+
+✓ Created 3 files:
+  📊 sales_report.xlsx
+     - Results sheet: 15 rows, 3 columns
+     - Query Info sheet: metadata and SQL
+     - Power Query Setup sheet: instructions for refreshable connection
+  📝 sales_report.sql - SQL query for editing/sharing
+  🔄 sales_report.m - Power Query M code (import to Excel)
+
+💡 Tip: Import the .m file in Excel for a refreshable connection to DuckDB!
 ```
+
+## Power Query Integration
+
+Mallard exports not just static Excel files, but **refreshable Power Query connections** that stay synchronized with your DuckDB database!
+
+### What Gets Exported
+
+When you export query results, Mallard creates **3 files**:
+
+1. **results.xlsx** - Excel workbook with 3 sheets:
+   - **Results**: Your query data with formatting
+   - **Query Info**: Metadata (SQL, execution time, row count)
+   - **Power Query Setup**: Step-by-step instructions
+
+2. **results.sql** - The SQL query as a separate file
+   - Edit the SQL without opening Excel
+   - Version control friendly
+   - Share across multiple workbooks
+
+3. **results.m** - Power Query M code for direct import
+   - Loads SQL from external .sql file at runtime
+   - Connects to DuckDB via ODBC (DSN=DuckDB)
+   - Import directly into Excel's Power Query Editor
+
+### How to Use Power Query
+
+**Option 1: Import the .m file (Easiest)**
+1. Open Excel
+2. Data > Get Data > Launch Power Query Editor
+3. Home > New Source > Blank Query
+4. Click Advanced Editor
+5. Paste contents of the .m file
+6. Click Done, then Close & Load
+7. Click Refresh anytime to update data from DuckDB!
+
+**Option 2: Manual ODBC setup**
+1. Data > Get Data > From Other Sources > From ODBC
+2. Select "DuckDB" DSN
+3. Click Advanced options
+4. Paste the SQL from results.sql
+5. Click OK > Load
+
+### Benefits
+
+- **Live data**: Click Refresh in Excel to get latest data from DuckDB
+- **No Mallard needed**: Users can refresh data without running Mallard
+- **Edit queries**: Modify the .sql file and refresh Excel
+- **Share queries**: Host .m files on your web server for team access
+- **Schedule refreshes**: Use Excel's scheduled refresh features
+
+### Intranet Deployment
+
+If you host .m files on your intranet web server:
+- Users can load queries directly from the web
+- Centrally manage and update queries
+- Everyone gets the latest query definitions
+- Version control query logic separately from Excel
 
 ## Architecture
 
@@ -131,7 +202,7 @@ The project follows a modular architecture with clear separation of concerns:
 
 ## Implementation Status
 
-### ✅ Phase 1-5 Complete (Full MVP)
+### ✅ Phase 1-5 Complete (Full MVP + Power Query)
 - [x] Basic project structure
 - [x] DuckDB CLI executor
 - [x] Claude API integration
@@ -140,9 +211,13 @@ The project follows a modular architecture with clear separation of concerns:
 - [x] Teaching features
 - [x] Special commands
 - [x] Excel export with EPPlus
-- [x] Two-sheet format (Results + Query Info)
+- [x] Three-sheet format (Results + Query Info + Power Query Setup)
 - [x] Formatted output with auto-fit columns
 - [x] Metadata tracking (SQL, timestamp, execution time)
+- [x] **Power Query integration** - Refreshable Excel connections
+- [x] External .sql file export for query editing
+- [x] Power Query .m file export for direct import
+- [x] Runtime SQL loading from external files
 
 ### 📋 Phase 6: Polish (Future)
 - [ ] Better error handling
@@ -151,6 +226,9 @@ The project follows a modular architecture with clear separation of concerns:
 - [ ] ODBC executor
 - [ ] Native executor
 - [ ] Configuration file support
+- [ ] SCP upload: Automatically upload .m and .sql files to intranet web server
+- [ ] Web server integration: Publish queries to centralized repository
+- [ ] Query library: Browse and load previously saved queries
 
 ## Target User Profile
 
