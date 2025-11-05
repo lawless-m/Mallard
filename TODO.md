@@ -144,6 +144,30 @@
   - Download .m files directly
   - Star/favorite queries
 
+## Future: Web Service Version
+
+**See WEB_SERVICE_PLAN.md for comprehensive implementation plan**
+
+Transform Mallard from CLI to full web application:
+- Server executes all queries (security, centralized)
+- Browser provides UI only (no DB access, no API keys)
+- Multi-user with authentication
+- Real-time query execution via SignalR
+- Shared conversations and query library
+- Scheduled queries with email
+- Mobile-responsive design
+- 80%+ code reuse from current CLI version
+
+**Estimated effort**: 6-7 weeks, 1 developer
+**Tech stack**: ASP.NET Core 8.0 + Blazor Server
+**Deployment**: IIS on Windows Server
+
+This would replace the CGI/JSON approach with better:
+- Security (server-side only)
+- Performance (ODBC vs HTTP+JSON)
+- Collaboration (shared queries)
+- User experience (real-time updates)
+
 ## Won't Do (Decided Against)
 
 - ❌ PgQuery integration - Different use case (PostgreSQL ad-hoc queries)
