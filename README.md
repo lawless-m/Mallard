@@ -53,7 +53,7 @@ Once running, you can use these commands:
 - `history` - Show query history
 - `clear` - Clear conversation history
 - `explain [query]` - Get detailed explanation of a query
-- `export [filename]` - Export last query results to Excel (coming in Phase 5)
+- `export [filename]` - Export last query results to Excel (.xlsx)
 - `exit` / `quit` - Exit the program
 
 ### Example Session
@@ -126,11 +126,12 @@ The project follows a modular architecture with clear separation of concerns:
 - **IQueryExecutor.cs**: Abstract interface for query execution
 - **Executors/DuckDbCliExecutor.cs**: CLI-based query execution
 - **SchemaLoader.cs**: Parquet metadata extraction
+- **ExcelExporter.cs**: Excel export with EPPlus (two-sheet format)
 - **Models/**: Data models (QueryResult, TableSchema, ConversationContext)
 
 ## Implementation Status
 
-### ✅ Phase 1-4 Complete (MVP Core)
+### ✅ Phase 1-5 Complete (Full MVP)
 - [x] Basic project structure
 - [x] DuckDB CLI executor
 - [x] Claude API integration
@@ -138,11 +139,10 @@ The project follows a modular architecture with clear separation of concerns:
 - [x] Conversation loop
 - [x] Teaching features
 - [x] Special commands
-
-### 🚧 Phase 5: Excel Export (Pending)
-- [ ] ExcelExporter implementation
-- [ ] Export to .xlsx with formatting
-- [ ] Metadata sheet with query info
+- [x] Excel export with EPPlus
+- [x] Two-sheet format (Results + Query Info)
+- [x] Formatted output with auto-fit columns
+- [x] Metadata tracking (SQL, timestamp, execution time)
 
 ### 📋 Phase 6: Polish (Future)
 - [ ] Better error handling

@@ -11,6 +11,7 @@ namespace Mallard
         private readonly IQueryExecutor _executor;
         private readonly ClaudeApiClient _claudeClient;
         private readonly ConversationContext _context;
+        private readonly ExcelExporter _excelExporter;
         private QueryResult? _lastQueryResult;
         private string _lastSql = string.Empty;
 
@@ -19,6 +20,7 @@ namespace Mallard
             _executor = executor;
             _claudeClient = claudeClient;
             _context = context;
+            _excelExporter = new ExcelExporter();
         }
 
         public async Task RunAsync()
@@ -285,9 +287,20 @@ namespace Mallard
                 return;
             }
 
-            Console.WriteLine($"\nExporting to Excel... (filename: {filename})");
-            Console.WriteLine("Note: Excel export functionality will be implemented in Phase 5.");
-            Console.WriteLine($"Would export {_lastQueryResult.RowCount} rows to {filename}");
+            try
+            {
+                Console.WriteLine($"\nExporting to Excel...");
+
+                var fullPath = _excelExporter.ExportToExcel(_lastQueryResult, filename, _lastSql);
+
+                Console.WriteLine($"✓ Created: {fullPath}");
+                Console.WriteLine($"  - Results sheet: {_lastQueryResult.RowCount} rows, {_lastQueryResult.ColumnNames.Count} columns");
+                Console.WriteLine($"  - Query Info sheet: metadata and SQL");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error exporting to Excel: {ex.Message}");
+            }
 
             await Task.CompletedTask;
         }
@@ -300,7 +313,7 @@ namespace Mallard
             Console.WriteLine("  history           - Show query history");
             Console.WriteLine("  clear             - Clear conversation history");
             Console.WriteLine("  explain [query]   - Get detailed explanation of a query");
-            Console.WriteLine("  export [filename] - Export last query results to Excel");
+            Console.WriteLine("  export [filename] - Export last query results to Excel (.xlsx)");
             Console.WriteLine("  exit / quit       - Exit the program");
             Console.WriteLine("\nOr just type your question in natural language!");
         }
